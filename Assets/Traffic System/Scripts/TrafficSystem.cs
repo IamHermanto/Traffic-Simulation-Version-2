@@ -7,12 +7,14 @@ using System.Collections.Generic;
 public class TrafficSystem : MonoBehaviour 
 {
 	public  static TrafficSystem Instance                    { get; set; }
+	
+	public static bool enableDebugLogging = false;
 
 	// BEGIN - Values used in Editor
 	public enum TrafficSystemTooltip
 	{
-		ANCHOR    = 0,
-		EDIT      = 1
+		ANCHOR = 0,
+		EDIT = 1
 	}
 
 	public enum RoadQuality
@@ -124,8 +126,24 @@ public class TrafficSystem : MonoBehaviour
 			Destroy(this);
 			return;
 		}
-
+		
 		Instance = this;
+		
+		// Check command line arguments for debug flag
+		string[] args = System.Environment.GetCommandLineArgs();
+		for(int i = 0; i < args.Length; i++)
+		{
+			if(args[i] == "--debug" || args[i] == "-d")
+			{
+				enableDebugLogging = true;
+				Debug.Log("=== DEBUG LOGGING ENABLED VIA COMMAND LINE ===");
+				break;
+			}
+		}
+		
+		Debug.Log("=== TRAFFIC SYSTEM INITIALIZED ===");
+		Debug.Log($"Vehicle spawn max: {m_vehicleSpawnCountMax}");
+		Debug.Log($"Global speed limit: {m_globalSpeedLimit}");
 	}
 
 	void Start () 
@@ -324,11 +342,18 @@ public class TrafficSystem : MonoBehaviour
 		if(Instance == null)
 			Instance = this;
 		#endif
+		
+		        // ADD THIS - Toggle debug logging with 'D' key
+        if(Input.GetKeyDown(KeyCode.D))
+        {
+            enableDebugLogging = !enableDebugLogging;
+            Debug.Log($"=== DEBUG LOGGING {(enableDebugLogging ? "ENABLED" : "DISABLED")} ===");
+        }
 
-		if(Input.GetKeyDown(KeyCode.L))
-			SetAllVehicleFrontLights( true );
-		else if(Input.GetKeyDown(KeyCode.K))
-			SetAllVehicleFrontLights( false );
+		if (Input.GetKeyDown(KeyCode.L))
+			SetAllVehicleFrontLights(true);
+		else if (Input.GetKeyDown(KeyCode.K))
+			SetAllVehicleFrontLights(false);
 	}
 
 	void OnDrawGizmos()

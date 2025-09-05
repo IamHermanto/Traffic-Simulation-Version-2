@@ -39,6 +39,12 @@ public class TrafficSystemVehicleSpawner : MonoBehaviour
 		TrafficSystemVehicle vehicle = Instantiate( m_vehiclePrefabs[randIndex], transform.position, transform.rotation ) as TrafficSystemVehicle;
 		vehicle.m_nextNode           = m_startNode;
 		vehicle.m_velocityMax        = Random.Range(m_randVelocityMin, m_randVelocityMax);
+
+		if(TrafficSystem.enableDebugLogging)
+		{
+			Debug.Log($"VEHICLE SPAWNED: {vehicle.name} at position {transform.position} with max velocity {vehicle.m_velocityMax}");
+		}
+    
 		return vehicle;
 	}
 

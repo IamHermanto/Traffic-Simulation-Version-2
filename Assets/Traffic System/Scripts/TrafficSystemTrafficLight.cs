@@ -46,6 +46,12 @@ public class TrafficSystemTrafficLight : MonoBehaviour
 			m_lightYellowArrow.gameObject.SetActive(false);
 		if(m_lightGreenArrow)
 			m_lightGreenArrow.gameObject .SetActive(false);
+
+		// DEBUG LOGGING FOR TRAFFIC LIGHT INITIALIZATION
+		if(TrafficSystem.enableDebugLogging)
+		{
+			Debug.Log($"TRAFFIC LIGHT INITIALIZED: {gameObject.name} - Initial Status: {m_status} | Green Duration: {m_greenDuration}s | Position: {transform.position}");
+		}
 	}
 
 	void FixedUpdate()
@@ -74,6 +80,12 @@ public class TrafficSystemTrafficLight : MonoBehaviour
 
 	public void SetStatus( Status a_status, bool a_useLightArrows = false )
 	{
+		// DEBUG LOGGING FOR STATUS CHANGES
+		if(TrafficSystem.enableDebugLogging)
+		{
+			Debug.Log($"TRAFFIC LIGHT CHANGE: {gameObject.name} - {m_status} → {a_status} | Arrows: {a_useLightArrows} | Location: {transform.position}");
+		}
+
 		m_status = a_status;
 
 		if(m_lightRed && m_lightYellow && m_lightGreen)
@@ -82,6 +94,12 @@ public class TrafficSystemTrafficLight : MonoBehaviour
 			{
 			case Status.GREEN:
 			{
+				// DEBUG LOGGING FOR GREEN ACTIVATION
+				if(TrafficSystem.enableDebugLogging)
+				{
+					Debug.Log($"LIGHT ACTIVATED: {gameObject.name} - GREEN LIGHT ON | Duration: {m_greenDuration}s");
+				}
+
 				m_lightRed.gameObject   .SetActive(false);
 				m_lightYellow.gameObject.SetActive(false);
 				m_lightGreen.gameObject .SetActive(true);
@@ -132,6 +150,12 @@ public class TrafficSystemTrafficLight : MonoBehaviour
 				break;
 			case Status.YELLOW:
 			{
+				// DEBUG LOGGING FOR YELLOW ACTIVATION
+				if(TrafficSystem.enableDebugLogging)
+				{
+					Debug.Log($"LIGHT ACTIVATED: {gameObject.name} - YELLOW LIGHT ON");
+				}
+
 				m_lightRed.gameObject   .SetActive(false);
 				m_lightYellow.gameObject.SetActive(true);
 				m_lightGreen.gameObject .SetActive(false);
@@ -153,6 +177,12 @@ public class TrafficSystemTrafficLight : MonoBehaviour
 				break;
 			case Status.RED:
 			{
+				// DEBUG LOGGING FOR RED ACTIVATION
+				if(TrafficSystem.enableDebugLogging)
+				{
+					Debug.Log($"LIGHT ACTIVATED: {gameObject.name} - RED LIGHT ON");
+				}
+
 				m_lightRed.gameObject   .SetActive(true);
 				m_lightYellow.gameObject.SetActive(false);
 				m_lightGreen.gameObject .SetActive(false);
@@ -185,6 +215,12 @@ public class TrafficSystemTrafficLight : MonoBehaviour
 
 		if(vehicle)
 		{
+			// DEBUG LOGGING FOR VEHICLE-LIGHT INTERACTION
+			if(TrafficSystem.enableDebugLogging)
+			{
+				Debug.Log($"VEHICLE HIT LIGHT: {vehicle.name} hit {gameObject.name} - Light Status: {m_status} | Vehicle Position: {vehicle.transform.position}");
+			}
+
 //			if(m_status == Status.RED)
 //			{
 //				vehicle.TrafficLight         = this;
@@ -195,7 +231,14 @@ public class TrafficSystemTrafficLight : MonoBehaviour
 			vehicle.AssignTrafficLight(this);
 
 			if(vehicle.IsTurningIntoIncomingTraffic() && !m_turnLeftAnytime)
+			{
+				// DEBUG LOGGING FOR PRIORITY QUEUE
+				if(TrafficSystem.enableDebugLogging)
+				{
+					Debug.Log($"PRIORITY VEHICLE: {vehicle.name} turning into incoming traffic - Added to priority queue");
+				}
 				m_intersection.AddToPriorityLightQueue( this );
+			}
 
 //			if(!m_checkStarted && m_turnLeftAnytime)
 //			{
@@ -205,13 +248,19 @@ public class TrafficSystemTrafficLight : MonoBehaviour
 //			}
 		}
 
+		// Handle player vehicles separately (they have the ProcessHasEnteredTrafficLightTrigger method)
 		if(a_obj.transform.GetComponent<TrafficSystemVehiclePlayer>())
 		{
-			TrafficSystemVehiclePlayer playerVehicle = null;
-			playerVehicle = a_obj.transform.GetComponent<TrafficSystemVehiclePlayer>();
+			TrafficSystemVehiclePlayer playerVehicle = a_obj.transform.GetComponent<TrafficSystemVehiclePlayer>();
 
 			if(playerVehicle)
 			{
+				// DEBUG LOGGING FOR PLAYER VEHICLE
+				if(TrafficSystem.enableDebugLogging)
+				{
+					Debug.Log($"PLAYER VEHICLE HIT LIGHT: {playerVehicle.name} hit {gameObject.name} - Light Status: {m_status}");
+				}
+
 //				playerVehicle.AssignTrafficLight(this);
 				
 				if(playerVehicle.IsTurningIntoIncomingTraffic() && !m_turnLeftAnytime)

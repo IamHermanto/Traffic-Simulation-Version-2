@@ -630,31 +630,31 @@ public class TrafficSystemVehicle : MonoBehaviour
 		}		
 	}
 
-	public virtual void Update () 
+	public virtual void Update()
 	{
-		if(m_calculatingPathToTake)
+		if (m_calculatingPathToTake)
 			return;
 
-//		CanSeeVehicleViaSphere();
+		//		CanSeeVehicleViaSphere();
 
-		if(!TrafficLight)
+		if (!TrafficLight)
 			m_trafficLightCoolDown += Time.deltaTime;
 
 		StopMoving = false;
 
-		if(WaitingForTraffic)
+		if (WaitingForTraffic)
 			StopMoving = true;
 
-		if(CrashDetected)
+		if (CrashDetected)
 		{
 			m_timetoWaitAfterCrashTimer += Time.deltaTime;
 			CrashOverCheck();
 		}
 
-		if(IsStuck())
+		if (IsStuck())
 		{
 			m_stuckDestroyTimer += Time.deltaTime;
-			if(m_stuckDestroyTimer >= m_stuckDestroyTimerMax)
+			if (m_stuckDestroyTimer >= m_stuckDestroyTimerMax)
 			{
 				if (Debug.isDebugBuild)
 					Debug.LogWarning("Vehicle Destroyed - m_stuckDestroyTimerMax - Vehicle had unusual behaviour");
@@ -662,10 +662,10 @@ public class TrafficSystemVehicle : MonoBehaviour
 				Kill();
 			}
 		}
-		else if(IsStopped() && m_enableWaitingDestroyTimer)
+		else if (IsStopped() && m_enableWaitingDestroyTimer)
 		{
 			m_waitingDestroyTimer += Time.deltaTime;
-			if(m_waitingDestroyTimer >= m_waitingDestroyTimerMax)
+			if (m_waitingDestroyTimer >= m_waitingDestroyTimerMax)
 			{
 				if (Debug.isDebugBuild)
 					Debug.LogWarning("Vehicle Destroyed - m_waitingDestroyTimerMax - (m_enableWaitingDestroyTimer = true) - Vehicle was waiting too long in the one position");
@@ -676,54 +676,54 @@ public class TrafficSystemVehicle : MonoBehaviour
 		else
 		{
 			m_waitingDestroyTimer = 0.0f;
-			m_stuckDestroyTimer   = 0.0f;
+			m_stuckDestroyTimer = 0.0f;
 		}
 
-		if(!m_useRoadSpeedLimits && m_velocityMaxOriginal != m_velocityMax)
+		if (!m_useRoadSpeedLimits && m_velocityMaxOriginal != m_velocityMax)
 		{
 			m_returnToOriginalVelocityTimer += Time.deltaTime;
-			if(m_returnToOriginalVelocityTimer >= m_returnToOriginalVelocityTimerMax)
+			if (m_returnToOriginalVelocityTimer >= m_returnToOriginalVelocityTimerMax)
 			{
 				m_velocityMax = m_velocityMaxOriginal;
 				m_returnToOriginalVelocityTimer = 0.0f;
 			}
 		}
 
-		if(VehicleHit) // if we are close to a car previously, wait before checking
+		if (VehicleHit) // if we are close to a car previously, wait before checking
 		{
 			m_waitTimer += Time.deltaTime;
-			if(m_waitTimer < m_waitTime)
+			if (m_waitTimer < m_waitTime)
 				return;
 		}
 
-		if(m_nextNode)
+		if (m_nextNode)
 		{
 			bool isOnHighway = false;
-			if(m_nextNode.IsHighway() && m_nextNode.IsHighwayChangeLaneAccepted() && m_vehicleCheckOvertakeOnHighway && m_nodeHighwaySearch != m_nextNode)
+			if (m_nextNode.IsHighway() && m_nextNode.IsHighwayChangeLaneAccepted() && m_vehicleCheckOvertakeOnHighway && m_nodeHighwaySearch != m_nextNode)
 				isOnHighway = true;
 
-			if(isOnHighway)
+			if (isOnHighway)
 			{
 				RaycastHit hitInfo;
-				VehicleHit  = null;
-				if(Physics.SphereCast( (transform.position + m_vehicleCheckOffset), m_vehicleCheckRadiusOvertakeHighwayOnly, transform.forward, out hitInfo, m_vehicleCheckDistOvertakeHighwayOnly ))
+				VehicleHit = null;
+				if (Physics.SphereCast((transform.position + m_vehicleCheckOffset), m_vehicleCheckRadiusOvertakeHighwayOnly, transform.forward, out hitInfo, m_vehicleCheckDistOvertakeHighwayOnly))
 				{
 					TrafficSystemVehicle vehicle = hitInfo.transform.GetComponent<TrafficSystemVehicle>();
-					if(vehicle)
+					if (vehicle)
 					{
-						if(vehicle != this && vehicle.VehicleHit != this && vehicle != m_previousVehicleToTryOvertaking)
+						if (vehicle != this && vehicle.VehicleHit != this && vehicle != m_previousVehicleToTryOvertaking)
 						{
 							float randChanceToOvertake = 0.0f;
 							randChanceToOvertake = Random.Range(0.0f, 1.0f);
 
 							m_previousVehicleToTryOvertaking = vehicle;
 
-							if(randChanceToOvertake <= m_randomChanceToOvertake)
+							if (randChanceToOvertake <= m_randomChanceToOvertake)
 							{
 								TrafficSystemNode node = m_nextNode.GetNextNodeHighway();
-								if(node)
+								if (node)
 								{
-									SetNextNode( node );
+									SetNextNode(node);
 									m_nodeHighwaySearch = m_nextNode;
 								}
 							}
@@ -731,14 +731,14 @@ public class TrafficSystemVehicle : MonoBehaviour
 					}
 				}
 
-				RaycastHit[] hitInfoAll = Physics.SphereCastAll( (transform.position + m_vehicleCheckOffset), m_vehicleCheckRadius, transform.forward, m_vehicleCheckDist );
-				VehicleHit  = null;
-				for(int hIndex = 0; hIndex < hitInfoAll.Length; hIndex++)
+				RaycastHit[] hitInfoAll = Physics.SphereCastAll((transform.position + m_vehicleCheckOffset), m_vehicleCheckRadius, transform.forward, m_vehicleCheckDist);
+				VehicleHit = null;
+				for (int hIndex = 0; hIndex < hitInfoAll.Length; hIndex++)
 				{
 					TrafficSystemVehicle vehicle = hitInfoAll[hIndex].transform.GetComponent<TrafficSystemVehicle>();
-					if(vehicle)
+					if (vehicle)
 					{
-						if(vehicle != this && vehicle.VehicleHit != this)
+						if (vehicle != this && vehicle.VehicleHit != this)
 						{
 							StopMoving = true;
 							VehicleHit = vehicle;
@@ -751,14 +751,14 @@ public class TrafficSystemVehicle : MonoBehaviour
 			}
 			else
 			{
-				RaycastHit[] hitInfoAll = Physics.SphereCastAll( (transform.position + m_vehicleCheckOffset), m_vehicleCheckRadius, transform.forward, m_vehicleCheckDist );
-				VehicleHit  = null;
-				for(int hIndex = 0; hIndex < hitInfoAll.Length; hIndex++)
+				RaycastHit[] hitInfoAll = Physics.SphereCastAll((transform.position + m_vehicleCheckOffset), m_vehicleCheckRadius, transform.forward, m_vehicleCheckDist);
+				VehicleHit = null;
+				for (int hIndex = 0; hIndex < hitInfoAll.Length; hIndex++)
 				{
 					TrafficSystemVehicle vehicle = hitInfoAll[hIndex].transform.GetComponent<TrafficSystemVehicle>();
-					if(vehicle)
+					if (vehicle)
 					{
-						if(vehicle != this && vehicle.VehicleHit != this)
+						if (vehicle != this && vehicle.VehicleHit != this)
 						{
 							StopMoving = true;
 							VehicleHit = vehicle;
@@ -769,18 +769,18 @@ public class TrafficSystemVehicle : MonoBehaviour
 					}
 				}
 			}
-			
-			if(!VehicleHit && m_enableVehicleCheckMid)
+
+			if (!VehicleHit && m_enableVehicleCheckMid)
 			{
-				RaycastHit[] hitInfo = Physics.SphereCastAll( (transform.position + m_vehicleCheckOffset), (m_vehicleCheckRadius * m_vehicleCheckRadiusMid ), transform.forward, m_vehicleCheckDist - m_vehicleCheckDistMid );
-				
-				VehicleHit  = null;
-				for(int hIndex = 0; hIndex < hitInfo.Length; hIndex++)
+				RaycastHit[] hitInfo = Physics.SphereCastAll((transform.position + m_vehicleCheckOffset), (m_vehicleCheckRadius * m_vehicleCheckRadiusMid), transform.forward, m_vehicleCheckDist - m_vehicleCheckDistMid);
+
+				VehicleHit = null;
+				for (int hIndex = 0; hIndex < hitInfo.Length; hIndex++)
 				{
 					TrafficSystemVehicle vehicle = hitInfo[hIndex].transform.GetComponent<TrafficSystemVehicle>();
-					if(vehicle)
+					if (vehicle)
 					{
-						if(vehicle != this && vehicle.VehicleHit != this )
+						if (vehicle != this && vehicle.VehicleHit != this)
 						{
 							StopMoving = true;
 							VehicleHit = vehicle;
@@ -793,27 +793,27 @@ public class TrafficSystemVehicle : MonoBehaviour
 			}
 		}
 
-		if(!StopMoving && TrafficLight && !CrashDetected) // determine if there is there is room to move throught the intersection
+		if (!StopMoving && TrafficLight && !CrashDetected) // determine if there is there is room to move throught the intersection
 		{
-			if(TrafficLight.m_status == TrafficSystemTrafficLight.Status.RED)
+			if (TrafficLight.m_status == TrafficSystemTrafficLight.Status.RED)
 			{
 				//print ("TrafficLight = RED");
 				StopMoving = true;
 			}
-			else if(CanSeeVehicleViaSphere() && !TrafficLight.IgnoreCanFitAcrossIntersectionCheck())
+			else if (CanSeeVehicleViaSphere() && !TrafficLight.IgnoreCanFitAcrossIntersectionCheck())
 			{
 				//print ("CanSeeVehicleViaSphere: = TRUE");
 				StopMoving = true;
 			}
-			else if(!CanFitAcrossIntersection() && !TrafficLight.IgnoreCanFitAcrossIntersectionCheck())
+			else if (!CanFitAcrossIntersection() && !TrafficLight.IgnoreCanFitAcrossIntersectionCheck())
 			{
 				//print ("CanFitAcrossIntersection: = FALSE");
 				StopMoving = true;
 			}
-			else if(TrafficLight.m_status == TrafficSystemTrafficLight.Status.YELLOW)
+			else if (TrafficLight.m_status == TrafficSystemTrafficLight.Status.YELLOW)
 			{
 				m_trafficLightYellowEnterDurationTimer += Time.deltaTime;
-				if(m_trafficLightYellowEnterDurationTimer <= m_trafficLightYellowEnterDuration)
+				if (m_trafficLightYellowEnterDurationTimer <= m_trafficLightYellowEnterDuration)
 				{
 					DriveThroughLights();
 				}
@@ -821,142 +821,147 @@ public class TrafficSystemVehicle : MonoBehaviour
 					//print ("TrafficLight = RED OR YELLOW");
 					StopMoving = true;
 			}
-			else if(TrafficLight.m_status == TrafficSystemTrafficLight.Status.GREEN)
+			else if (TrafficLight.m_status == TrafficSystemTrafficLight.Status.GREEN)
 			{
 				DriveThroughLights();
 			}
 
-//			print ("TrafficLight: " + TrafficLight);
+			//			print ("TrafficLight: " + TrafficLight);
 		}
 
-		if(!StopMoving && m_nextNode && !CrashDetected)// && !m_pathingStarted)
+		if (!StopMoving && m_nextNode && !CrashDetected)// && !m_pathingStarted)
 		{
 			VehicleInSights = CanSeeVehicleViaRay();
 			float ratio = 1.0f;
-			if(VehicleInSights)
+			if (VehicleInSights)
 			{
-				if(VehicleInSights.VehicleInSights && VehicleInSights.VehicleInSights == this)
+				if (VehicleInSights.VehicleInSights && VehicleInSights.VehicleInSights == this)
 				{
 					// do nothing as these two cars are facing eachother for unknown reasons so none of them should slow down with this ray detection.
 				}
 				else
 				{
-//					float velocityRatio = 1.0f;
+					//					float velocityRatio = 1.0f;
 
-//					if(m_velocity > 0.0f)
-//						velocityRatio = VehicleInSights.m_velocity / m_velocity;
+					//					if(m_velocity > 0.0f)
+					//						velocityRatio = VehicleInSights.m_velocity / m_velocity;
 
 					Vector3 dirOfVehicleInSight = transform.position - VehicleInSights.transform.position;
 					ratio = Mathf.Clamp((dirOfVehicleInSight.magnitude / m_vehicleCheckDistRay), 0.0f, 1.0f);
 
-					if(ratio < m_vehicleCheckDistRayMimicSpeedThreshold)
+					if (ratio < m_vehicleCheckDistRayMimicSpeedThreshold)
 						m_velocityMax = VehicleInSights.m_velocityMax;
 				}
 			}
 
-			if(Accelerate)                                                              // are we accelerating?
+			if (Accelerate)                                                              // are we accelerating?
 				m_velocity = m_velocity + ((m_accelerationRate * ratio) * Time.deltaTime);        // add to the current velocity according while accelerating
-//			else
-//				m_velocity = m_velocity - (m_decelerationRate * Time.deltaTime);        // subtract from the current velocity while decelerating
+																								  //			else
+																								  //				m_velocity = m_velocity - (m_decelerationRate * Time.deltaTime);        // subtract from the current velocity while decelerating
 
 			float velTmp = m_velocityMax * ratio;
 
-			if(velTmp > m_velocity)
+			if (velTmp > m_velocity)
 				m_velocity = m_velocity - ((m_accelerationRate * m_decelerationPercentage) * Time.deltaTime);
 			else
 				m_velocity = velTmp;
 
-			if(VehicleHit)
+			if (VehicleHit)
 				m_velocity = VehicleHit.m_velocity;                                     // ensure the velocity is the same as the car in front
 			else
 				m_velocity = Mathf.Clamp(m_velocity, m_velocityMin, m_velocityMax);     // ensure the velocity never goes out of the min/max boundaries
 
 			Vector3 dir = m_nextNode.transform.position;
-			dir.x      += m_lanePosVariation;
-			dir.z      += m_lanePosVariation;
-			dir         = dir - (transform.position + m_offsetPosVal);           // find the direction to the next node
+			dir.x += m_lanePosVariation;
+			dir.z += m_lanePosVariation;
+			dir = dir - (transform.position + m_offsetPosVal);           // find the direction to the next node
 
 			Vector3 speed = dir.normalized * m_velocity;                                // work out how fast we should travel in the desired directoin
 
-			for(int rIndex = 0; rIndex < m_lightsRear.Length; rIndex++)
+			for (int rIndex = 0; rIndex < m_lightsRear.Length; rIndex++)
 			{
-				if(m_lightsRear[rIndex].gameObject.activeSelf)
+				if (m_lightsRear[rIndex].gameObject.activeSelf)
 					m_lightsRear[rIndex].gameObject.SetActive(false);
 			}
 
 			Vector3 wheelAxis = Vector3.zero;
 
-			if(m_wheelAxis == AxisType.X)
+			if (m_wheelAxis == AxisType.X)
 				wheelAxis = new Vector3(1.0f, 0.0f, 0.0f);
-			else if(m_wheelAxis == AxisType.Y)
+			else if (m_wheelAxis == AxisType.Y)
 				wheelAxis = new Vector3(0.0f, 1.0f, 0.0f);
-			else if(m_wheelAxis == AxisType.Z)
+			else if (m_wheelAxis == AxisType.Z)
 				wheelAxis = new Vector3(0.0f, 0.0f, 1.0f);
 
-			for(int wIndex = 0; wIndex < m_wheelsFront.Length; wIndex++)
+			for (int wIndex = 0; wIndex < m_wheelsFront.Length; wIndex++)
 				m_wheelsFront[wIndex].transform.Rotate(wheelAxis, m_velocity * m_wheelRotMultiplier);
-			
-			for(int wIndex = 0; wIndex < m_wheelsRear.Length; wIndex++)
+
+			for (int wIndex = 0; wIndex < m_wheelsRear.Length; wIndex++)
 				m_wheelsRear[wIndex].transform.Rotate(wheelAxis, m_velocity * m_wheelRotMultiplier);
 
 			float rotSpeed = (m_velocity / m_velocityMax) * m_rotationSpeed;
-			if(m_rigidbody)                                                             // if we have a rigidbody, use the following code to move us
+			if (m_rigidbody)                                                             // if we have a rigidbody, use the following code to move us
 			{
 				m_rigidbody.velocity = speed;                                           // set our rigidbody to this speed to move us by the determined speed 
-				transform.forward    = Vector3.Lerp( transform.forward, dir.normalized, rotSpeed * Time.deltaTime );    // rotate our forward directoin over time to face the node we are moving towards
+				transform.forward = Vector3.Lerp(transform.forward, dir.normalized, rotSpeed * Time.deltaTime);    // rotate our forward directoin over time to face the node we are moving towards
 			}
 			else                                                                        // no rigidbody then use the following code to move us
 			{
-				if(m_collider || GetComponent<Collider>())                                              // it generally is a bad idea to move something with a collider, so we should tell someone about it if this is happening. See Unity Docs for more info: http://docs.unity3d.com/ScriptReference/Collider.html
+				if (m_collider || GetComponent<Collider>())                                              // it generally is a bad idea to move something with a collider, so we should tell someone about it if this is happening. See Unity Docs for more info: http://docs.unity3d.com/ScriptReference/Collider.html
 					Debug.LogWarning("Traffic System Warning -> VehicleBase has a collider. You should think about moving the object with a rigidbody instead.");
-				
+
 				transform.position += speed * Time.deltaTime;                           // move us by the determined speed
-				transform.forward   = Vector3.Lerp( transform.forward, dir.normalized, rotSpeed * Time.deltaTime );     // rotate our forward directoin over time to face the node we are moving towards
+				transform.forward = Vector3.Lerp(transform.forward, dir.normalized, rotSpeed * Time.deltaTime);     // rotate our forward directoin over time to face the node we are moving towards
 			}
 
-			if(dir.magnitude < m_nextNodeThreshold)                                     // if we are close enough to the node we were travelling towards then check for the next one
+			if (dir.magnitude < m_nextNodeThreshold)                                     // if we are close enough to the node we were travelling towards then check for the next one
 			{
-//				if(m_nextNode.HasSplineToFollow( this ))
-//				{
-//					if(!m_traversePath)
-//					{
-//						m_traversePath = true;
-//						ProcessSpline();
-//					}
-//				}
-//				else
+				//				if(m_nextNode.HasSplineToFollow( this ))
+				//				{
+				//					if(!m_traversePath)
+				//					{
+				//						m_traversePath = true;
+				//						ProcessSpline();
+				//					}
+				//				}
+				//				else
 
-//				if(!IsTrafficJamOnUpcomingNodes())
-//				{
-//					TrafficSystemNode preNextNode = m_nextNode;
-//
-//					List<TrafficSystemNode> blockedNodes = new List<TrafficSystemNode>();
-//					for(int nIndex = 0; nIndex < m_nextNode.m_connectedNodes.Count; nIndex++)
-//					{
-//						TrafficSystemNode nodeToCheck = m_nextNode.m_connectedNodes[nIndex];
-//						if(VehicleExistsOnNode(nodeToCheck))
-//							blockedNodes.Add(nodeToCheck);
-//					}
-//
-				SetNextNode( m_nextNode.GetNextNode( this, true/*, blockedNodes*/ ) );                            // gets the next required node to go to and start the process all over again
-				//}
+				//				if(!IsTrafficJamOnUpcomingNodes())
+				//				{
+				//					TrafficSystemNode preNextNode = m_nextNode;
+				//
+				//					List<TrafficSystemNode> blockedNodes = new List<TrafficSystemNode>();
+				//					for(int nIndex = 0; nIndex < m_nextNode.m_connectedNodes.Count; nIndex++)
+				//					{
+				//						TrafficSystemNode nodeToCheck = m_nextNode.m_connectedNodes[nIndex];
+				//						if(VehicleExistsOnNode(nodeToCheck))
+				//							blockedNodes.Add(nodeToCheck);
+				//					}
+				//
+				SetNextNode(m_nextNode.GetNextNode(this, true/*, blockedNodes*/ ));                            // gets the next required node to go to and start the process all over again
+																											   //}
 			}
 		}
-		else if(CrashDetected)
+		else if (CrashDetected)
 		{
 			// don't stop, but don't do anything
 		}
-		else if(StopMoving)
+		else if (StopMoving)
 		{
 			Stop();
 		}
 
-		if(m_killOnEmptyPath && !m_nextNode)
+		if (m_killOnEmptyPath && !m_nextNode)
 		{
 			if (Debug.isDebugBuild)
 				Debug.LogWarning("Vehicle Destroyed - No path node");
 
 			Kill();
+		}
+		
+		if(TrafficSystem.enableDebugLogging && Time.time % 5f < Time.deltaTime)
+		{
+			Debug.Log($"VEHICLE UPDATE: {name} - Position: {transform.position}, Velocity: {m_velocity}, Next Node: {(m_nextNode ? m_nextNode.name : "NULL")}");
 		}
 	}
 
