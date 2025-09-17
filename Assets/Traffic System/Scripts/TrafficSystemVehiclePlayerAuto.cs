@@ -165,8 +165,8 @@ public class TrafficSystemVehiclePlayerAuto : TrafficSystemVehicle
 						}
 					}
 				}
-				else
-					Debug.LogWarning("Traffic System Traffic Light is missing a parent intersection! See the example traffic system intersection and the structure setup as this is what you need to mimic");
+				//else
+					//Debug.LogWarning("Traffic System Traffic Light is missing a parent intersection! See the example traffic system intersection and the structure setup as this is what you need to mimic");
 			}
 			
 			//			print ("TrafficLight: " + TrafficLight);

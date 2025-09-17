@@ -57,7 +57,7 @@ public class TrafficSystemPiece : MonoBehaviour
 		Refresh();
 
 		if(Application.isPlaying && m_speedLimit == -1)
-			m_speedLimit = TrafficSystem.Instance.m_globalSpeedLimit;
+			m_speedLimit = (int)TrafficSystem.Instance.m_globalSpeedLimit;
 
 		for (int cIndex = 0; cIndex < transform.childCount; cIndex++) 
 		{

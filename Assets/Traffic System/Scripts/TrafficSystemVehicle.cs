@@ -993,7 +993,7 @@ public class TrafficSystemVehicle : MonoBehaviour
 			}
 		}
 		else
-			Debug.LogWarning("Traffic System Traffic Light is missing a parent intersection! See the example traffic system intersection and the structure setup as this is what you need to mimic");
+			//Debug.LogWarning("Traffic System Traffic Light is missing a parent intersection! See the example traffic system intersection and the structure setup as this is what you need to mimic");
 
 		m_trafficLightYellowEnterDurationTimer = 0.0f;
 	}
