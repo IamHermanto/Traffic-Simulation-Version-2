@@ -256,7 +256,52 @@ public class TrafficSystemTrafficLight : MonoBehaviour
 		string timestampFile = m_commandFilePath.Replace("_command.json", "_timestamp.txt");
 		System.IO.File.WriteAllText(timestampFile, timestamp.ToString());
 	}
+// Add this method to TrafficSystemTrafficLight.cs, right after OnTriggerEnter
+void OnTriggerExit( Collider a_obj )
+{
+	TrafficSystemVehicle vehicle = null;
 
+	if(a_obj.transform.GetComponent<TrafficSystemVehicle>())
+		vehicle = a_obj.transform.GetComponent<TrafficSystemVehicle>();
+
+	if(vehicle)
+	{
+		// DEBUG LOGGING FOR VEHICLE LEAVING
+		if(TrafficSystem.enableDebugLogging)
+		{
+			Debug.Log($"VEHICLE LEFT LIGHT: {vehicle.name} left {gameObject.name} | Vehicle Position: {vehicle.transform.position}");
+		}
+
+		// Release the vehicle from this traffic light's control
+		if(vehicle.TrafficLight == this)
+		{
+			vehicle.TrafficLight = null;
+			vehicle.StopMoving = false;
+			
+			if(TrafficSystem.enableDebugLogging)
+			{
+				Debug.Log($"VEHICLE RELEASED: {vehicle.name} released from {gameObject.name} control");
+			}
+		}
+	}
+
+	// Handle player vehicles
+	if(a_obj.transform.GetComponent<TrafficSystemVehiclePlayer>())
+	{
+		TrafficSystemVehiclePlayer playerVehicle = a_obj.transform.GetComponent<TrafficSystemVehiclePlayer>();
+
+		if(playerVehicle && playerVehicle.TrafficLight == this)
+		{
+			if(TrafficSystem.enableDebugLogging)
+			{
+				Debug.Log($"PLAYER VEHICLE LEFT LIGHT: {playerVehicle.name} left {gameObject.name}");
+			}
+			
+			playerVehicle.TrafficLight = null;
+			playerVehicle.StopMoving = false;
+		}
+	}
+}
 	void WriteStatusToFile()
 {
     try 
