@@ -1,5 +1,5 @@
 Building for Linux Server
-1. Install Linux Build Support
+1. Install Linux Build Support or any other build support that you need
 Open Unity Hub → Installs → Click gear icon on your Unity version → Add Modules → Check "Linux Build Support (Mono)" → Install
 2. Open Project
 Unity Hub → Add → Select project folder → Open
